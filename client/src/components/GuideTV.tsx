@@ -5,7 +5,19 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Channel, Program } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Film, Tv } from "lucide-react";
+import { 
+  Calendar, 
+  Clock, 
+  Film, 
+  Tv, 
+  Music, 
+  Trophy, 
+  Globe, 
+  BookOpen,
+  Baby,
+  Theater,
+  Radio
+} from "lucide-react";
 
 interface GuideTVProps {
   channels: Channel[];
@@ -24,18 +36,54 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
     
     const categories = [
       "Films", "Séries", "Sport", "Information", "Documentaire", 
-      "Divertissement", "Jeunesse", "Culture"
+      "Divertissement", "Jeunesse", "Culture", "Musique", "Télé-réalité"
     ];
     
+    const categoryIcons = {
+      "Films": Film,
+      "Séries": Tv,
+      "Sport": Trophy,
+      "Information": Globe,
+      "Documentaire": BookOpen,
+      "Divertissement": Theater,
+      "Jeunesse": Baby,
+      "Culture": Radio,
+      "Musique": Music
+    };
+    
     const titles = {
-      "Films": ["Le Grand Film", "Action Totale", "Comédie du Soir", "Drame Passionné"],
-      "Séries": ["Les Aventuriers", "Enquêtes Spéciales", "La Famille", "Docteur Urgences"],
-      "Sport": ["Match de Football", "Tennis en Direct", "Basketball Championship", "Sports Extrêmes"],
-      "Information": ["Journal TV", "Enquêtes et Reportages", "Magazine d'Investigation"],
-      "Documentaire": ["Nature Sauvage", "Histoire Mondiale", "Sciences et Découvertes"],
-      "Divertissement": ["Le Grand Show", "Jeux et Quiz", "Télé-Réalité"],
-      "Jeunesse": ["Dessins Animés", "Club des Enfants", "Aventures Animées"],
-      "Culture": ["Arts et Culture", "Musique Live", "Théâtre et Spectacles"]
+      "Films": [
+        "Le Grand Film", "Action Totale", "Comédie du Soir", "Drame Passionné",
+        "Aventure Spatiale", "Romance d'Été", "Thriller Nocturne", "Western Moderne"
+      ],
+      "Séries": [
+        "Les Aventuriers", "Enquêtes Spéciales", "La Famille", "Docteur Urgences",
+        "Police Scientifique", "Histoires Parallèles", "Le Bureau", "Café des Secrets"
+      ],
+      "Sport": [
+        "Match de Football", "Tennis en Direct", "Basketball Championship", "Sports Extrêmes",
+        "Rugby Elite", "F1 Grand Prix", "Boxe Championship", "Athlétisme Elite"
+      ],
+      "Information": [
+        "Journal TV", "Enquêtes et Reportages", "Magazine d'Investigation",
+        "Débat du Jour", "Edition Spéciale", "Le Point", "7 Jours en France"
+      ],
+      "Documentaire": [
+        "Nature Sauvage", "Histoire Mondiale", "Sciences et Découvertes",
+        "Voyage Culinaire", "Secrets de l'Univers", "Tech & Futur", "Civilisations"
+      ],
+      "Divertissement": [
+        "Le Grand Show", "Jeux et Quiz", "Télé-Réalité", "Karaoké Star",
+        "Talent Show", "Top Chef", "Les Stars en Cuisine", "Danse avec les Stars"
+      ],
+      "Jeunesse": [
+        "Dessins Animés", "Club des Enfants", "Aventures Animées",
+        "Les Mini-héros", "École des Découvertes", "Jeux & Cie", "Les Petits Génies"
+      ],
+      "Culture": [
+        "Arts et Culture", "Musique Live", "Théâtre et Spectacles",
+        "Expo Mondiale", "Festival Jazz", "Opéra Classic", "Danse Contemporaine"
+      ]
     };
     
     for (let i = 0; i < 5; i++) {
