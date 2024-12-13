@@ -25,7 +25,7 @@ export function ChannelSidebar({ isVisible, onChannelSelect }: ChannelSidebarPro
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: '-100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-          className="fixed left-0 top-0 h-full w-72 bg-black/80 backdrop-blur-sm z-50 overflow-hidden"
+          className="channel-sidebar fixed left-0 top-0 h-full w-72 bg-black/80 backdrop-blur-sm z-50 overflow-hidden"
         >
           <div className="h-full flex flex-col p-4">
             <input

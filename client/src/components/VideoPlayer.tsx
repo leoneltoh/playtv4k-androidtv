@@ -29,11 +29,9 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
         }
       } catch (error) {
         console.warn('Fullscreen not available:', error);
-        // Continue playback even if fullscreen fails
       }
     };
 
-    // Try to enter fullscreen on mount
     handleFullscreen();
 
     const handleFullscreenChange = () => {
@@ -48,14 +46,20 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
+  }, []);
+
+  useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Menu' || e.key === 'ContextMenu' || e.key === 'Enter') {
+        e.preventDefault();
         setShowSidebar(prev => !prev);
       }
     };
 
-    const handleClick = () => {
-      setShowSidebar(prev => !prev);
+    const handleClick = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('.channel-sidebar')) {
+        setShowSidebar(prev => !prev);
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
