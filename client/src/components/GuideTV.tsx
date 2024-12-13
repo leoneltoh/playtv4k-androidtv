@@ -29,85 +29,12 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
   const [, setLocation] = useLocation();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Simulation des programmes pour la démonstration
-  const generatePrograms = (channel: Channel): Program[] => {
-    const programs: Program[] = [];
-    let currentTime = new Date();
-    
-    const categories = [
-      "Films", "Séries", "Sport", "Information", "Documentaire", 
-      "Divertissement", "Jeunesse", "Culture", "Musique", "Télé-réalité"
-    ];
-    
-    const categoryIcons = {
-      "Films": Film,
-      "Séries": Tv,
-      "Sport": Trophy,
-      "Information": Globe,
-      "Documentaire": BookOpen,
-      "Divertissement": Theater,
-      "Jeunesse": Baby,
-      "Culture": Radio,
-      "Musique": Music
-    };
-    
-    const titles = {
-      "Films": [
-        "Le Grand Film", "Action Totale", "Comédie du Soir", "Drame Passionné",
-        "Aventure Spatiale", "Romance d'Été", "Thriller Nocturne", "Western Moderne"
-      ],
-      "Séries": [
-        "Les Aventuriers", "Enquêtes Spéciales", "La Famille", "Docteur Urgences",
-        "Police Scientifique", "Histoires Parallèles", "Le Bureau", "Café des Secrets"
-      ],
-      "Sport": [
-        "Match de Football", "Tennis en Direct", "Basketball Championship", "Sports Extrêmes",
-        "Rugby Elite", "F1 Grand Prix", "Boxe Championship", "Athlétisme Elite"
-      ],
-      "Information": [
-        "Journal TV", "Enquêtes et Reportages", "Magazine d'Investigation",
-        "Débat du Jour", "Edition Spéciale", "Le Point", "7 Jours en France"
-      ],
-      "Documentaire": [
-        "Nature Sauvage", "Histoire Mondiale", "Sciences et Découvertes",
-        "Voyage Culinaire", "Secrets de l'Univers", "Tech & Futur", "Civilisations"
-      ],
-      "Divertissement": [
-        "Le Grand Show", "Jeux et Quiz", "Télé-Réalité", "Karaoké Star",
-        "Talent Show", "Top Chef", "Les Stars en Cuisine", "Danse avec les Stars"
-      ],
-      "Jeunesse": [
-        "Dessins Animés", "Club des Enfants", "Aventures Animées",
-        "Les Mini-héros", "École des Découvertes", "Jeux & Cie", "Les Petits Génies"
-      ],
-      "Culture": [
-        "Arts et Culture", "Musique Live", "Théâtre et Spectacles",
-        "Expo Mondiale", "Festival Jazz", "Opéra Classic", "Danse Contemporaine"
-      ]
-    };
-    
-    for (let i = 0; i < 5; i++) {
-      const startTime = new Date(currentTime);
-      const endTime = new Date(startTime.getTime() + (Math.random() * 2 + 1) * 60 * 60 * 1000);
-      const category = channel.group || categories[Math.floor(Math.random() * categories.length)];
-      const titlesList = titles[category as keyof typeof titles] || titles["Divertissement"];
-      const title = titlesList[Math.floor(Math.random() * titlesList.length)];
-      
-      programs.push({
-        id: crypto.randomUUID(),
-        title,
-        description: `Ne manquez pas ${title} sur ${channel.name}. Un programme exclusif sélectionné spécialement pour vous.`,
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
-        category,
-        thumbnail: channel.logo
-      });
-      
-      currentTime = endTime;
-    }
-    
-    return programs;
-  };
+  // Utiliser les programmes réels de la base de données
+  const { data: allPrograms, isLoading: programsLoading } = usePrograms(
+    channels[0]?.id,
+    new Date(),
+    new Date(Date.now() + 24 * 60 * 60 * 1000)
+  );
 
   return (
     <AnimatePresence>
