@@ -21,7 +21,8 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
   const { data: channels } = useM3uData();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPiP, setIsPiP] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<ReactPlayer>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const toggleFullscreen = async () => {
     try {
@@ -48,13 +49,14 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
 
   const togglePiP = async () => {
     try {
-      if (!videoRef.current) return;
+      const videoElement = playerRef.current?.getInternalPlayer();
+      if (!videoElement) return;
       
       if (document.pictureInPictureElement) {
         await document.exitPictureInPicture();
         setIsPiP(false);
-      } else {
-        await videoRef.current.requestPictureInPicture();
+      } else if (videoElement.requestPictureInPicture) {
+        await videoElement.requestPictureInPicture();
         setIsPiP(true);
       }
     } catch (error) {
@@ -179,6 +181,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
           onClose={() => setShowGuide(false)}
         />
       <ReactPlayer
+        ref={playerRef}
         url={currentUrl}
         width="100%"
         height="100%"
@@ -192,7 +195,6 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
               controlsList: 'nodownload',
               playsInline: true,
               autoPlay: true,
-              ref: videoRef,
               style: {
                 position: 'absolute',
                 width: '100%',
