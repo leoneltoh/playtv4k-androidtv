@@ -19,7 +19,8 @@ import {
   Baby,
   Theater,
   Radio,
-  X
+  X,
+  Bell
 } from "lucide-react";
 
 interface GuideTVProps {
@@ -473,15 +474,45 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                                   [program.id]: !prev[program.id]
                                 }));
                                 if (!reminders[program.id]) {
-                                  // Programmer une notification
-                                  const programTime = new Date(program.startTime);
-                                  const now = new Date();
-                                  if (programTime > now) {
-                                    setTimeout(() => {
-                                      new Notification(`Le programme ${program.title} va commencer!`, {
-                                        body: `Sur ${channel.name} dans quelques minutes`
-                                      });
-                                    }, programTime.getTime() - now.getTime() - 5 * 60 * 1000); // 5 minutes avant
+                                  // Vérifier si les notifications sont supportées et autorisées
+                                  if ("Notification" in window) {
+                                    Notification.requestPermission().then(permission => {
+                                      if (permission === "granted") {
+                                        const programTime = new Date(program.startTime);
+                                        const now = new Date();
+                                        if (programTime > now) {
+                                          // Notifications intelligentes avec plusieurs rappels
+                                          const timers = [
+                                            { delay: 24 * 60 * 60 * 1000, message: "demain" }, // 24h avant
+                                            { delay: 60 * 60 * 1000, message: "dans une heure" }, // 1h avant
+                                            { delay: 5 * 60 * 1000, message: "dans 5 minutes" } // 5min avant
+                                          ];
+
+                                          timers.forEach(({ delay, message }) => {
+                                            const notificationTime = programTime.getTime() - delay;
+                                            if (notificationTime > now.getTime()) {
+                                              setTimeout(() => {
+                                                new Notification(`${program.title} commence ${message}!`, {
+                                                  body: `Ne manquez pas ce programme sur ${channel.name}`,
+                                                  icon: channel.logo || '/favicon.ico',
+                                                  badge: channel.logo || '/favicon.ico',
+                                                  vibrate: [200, 100, 200],
+                                                  tag: `program-${program.id}-${message}`,
+                                                  renotify: true
+                                                });
+                                              }, notificationTime - now.getTime());
+                                            }
+                                          });
+
+                                          // Sauvegarder les préférences de l'utilisateur
+                                          const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+                                          userPreferences.categories = userPreferences.categories || {};
+                                          userPreferences.categories[program.category || 'undefined'] = 
+                                            (userPreferences.categories[program.category || 'undefined'] || 0) + 1;
+                                          localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+                                        }
+                                      }
+                                    });
                                   }
                                 }
                               }}
@@ -491,7 +522,27 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                                   : 'text-white/60 hover:text-white'
                               }`}
                             >
-                              {reminders[program.id] ? 'Rappel activé' : 'Définir un rappel'}
+                              <motion.div
+                                className="flex items-center space-x-2"
+                                initial={false}
+                                animate={{ 
+                                  scale: reminders[program.id] ? [1, 1.2, 1] : 1,
+                                  rotate: reminders[program.id] ? [0, 15, -15, 0] : 0
+                                }}
+                                transition={{ duration: 0.5 }}
+                              >
+                                {reminders[program.id] ? (
+                                  <>
+                                    <Clock className="w-4 h-4" />
+                                    <span>Rappels activés</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Bell className="w-4 h-4" />
+                                    <span>Définir des rappels</span>
+                                  </>
+                                )}
+                              </motion.div>
                             </Button>
                           </div>
                         )}
