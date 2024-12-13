@@ -1,7 +1,10 @@
 import { useLocation } from "wouter";
 import type { Channel } from "@/lib/types";
 import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star } from "lucide-react";
+import { useFavoriteChannels } from "@/hooks/useFavoriteChannels";
+import { Button } from "@/components/ui/button";
 
 interface ChannelCardProps {
   channel: Channel;
@@ -14,6 +17,8 @@ const item = {
 
 export function ChannelCard({ channel }: ChannelCardProps) {
   const [, setLocation] = useLocation();
+  const { toggleFavorite, isFavorite } = useFavoriteChannels();
+  const isChannelFavorite = isFavorite(channel.id);
 
   return (
     <motion.div 
@@ -37,11 +42,41 @@ export function ChannelCard({ channel }: ChannelCardProps) {
         <div className="aspect-video relative group">
           <div className="absolute inset-0 bg-gradient-to-t from-pink-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
           {channel.logo ? (
-            <img 
-              src={channel.logo} 
-              alt={channel.name}
-              className="w-full h-full object-contain p-4 bg-transparent transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
-            />
+            <div className="w-full h-full object-contain p-4 bg-transparent transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 relative">
+              <img 
+                src={channel.logo} 
+                alt={channel.name}
+                className="w-full h-full object-contain"
+              />
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="absolute top-2 right-2 z-10"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`rounded-full ${
+                      isChannelFavorite 
+                        ? 'bg-pink-500/20 text-pink-400 hover:bg-pink-500/30' 
+                        : 'bg-black/40 text-white/60 hover:bg-black/60'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(channel.id);
+                    }}
+                  >
+                    <Star
+                      className={`w-4 h-4 ${
+                        isChannelFavorite ? 'fill-current' : ''
+                      }`}
+                    />
+                  </Button>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-purple-500/20 backdrop-blur-sm">
               <motion.span 
