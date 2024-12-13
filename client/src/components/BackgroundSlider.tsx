@@ -10,29 +10,50 @@ const images = [
 
 export function BackgroundSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // Précharger toutes les images
+    Promise.all(
+      images.map((src) => {
+        const img = new Image();
+        img.src = src;
+        return new Promise((resolve) => {
+          img.onload = resolve;
+        });
+      })
+    ).then(() => {
+      setLoaded(true);
+    });
+
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(timer);
   }, []);
 
+  if (!loaded) return null;
+
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      <AnimatePresence mode="wait">
-        <motion.img
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+      <AnimatePresence initial={false}>
+        <motion.div
           key={currentIndex}
-          src={images[currentIndex]}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 0.9, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        >
+          <img
+            src={images[currentIndex]}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-background/20 to-transparent" />
+        </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-background/30 to-background/5" />
     </div>
   );
 }
