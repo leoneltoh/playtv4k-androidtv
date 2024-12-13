@@ -215,6 +215,7 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.9, opacity: 0 }}
                   className="bg-background p-6 rounded-lg w-full max-w-md relative"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <Button
                     variant="ghost"
