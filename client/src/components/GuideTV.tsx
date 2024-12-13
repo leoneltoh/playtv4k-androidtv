@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Channel, Program } from "@/lib/types";
+import { usePrograms } from "@/hooks/usePrograms";
 import { Button } from "@/components/ui/button";
 import { 
   Calendar, 
@@ -102,7 +103,7 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                   </div>
 
                   <div className="p-4">
-                    {generatePrograms(channel).map((program) => (
+                    {programs?.map((program) => (
                       <motion.div
                         key={program.id}
                         whileHover={{ scale: 1.02 }}
