@@ -40,6 +40,15 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
     const saved = localStorage.getItem('customPrograms');
     return saved ? JSON.parse(saved) : {};
   });
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [reminders, setReminders] = useState<Record<string, boolean>>(() => {
+    const saved = localStorage.getItem('programReminders');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem('programReminders', JSON.stringify(reminders));
+  }, [reminders]);
 
   useEffect(() => {
     localStorage.setItem('customPrograms', JSON.stringify(customPrograms));
@@ -356,6 +365,26 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
           )}
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">Guide des Programmes</h2>
+              <div className="flex gap-2">
+                {["Films", "Séries", "Sport", "Information", "Documentaire", "Divertissement", "Jeunesse", "Culture", "Musique"].map((category) => (
+                  <Button
+                    key={category}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
+                    className={`${
+                      selectedCategory === category 
+                        ? 'bg-pink-500/30 text-white' 
+                        : 'text-white/70 hover:text-white hover:bg-pink-500/20'
+                    }`}
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+            </div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -384,11 +413,13 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                   </div>
 
                   <div className="p-4">
-                    {generatePrograms(channel).map((program) => (
+                    {generatePrograms(channel).filter(program => !selectedCategory || program.category === selectedCategory).map((program) => (
                       <motion.div
                         key={program.id}
                         whileHover={{ scale: 1.02 }}
-                        className="py-2 border-b border-white/10 last:border-0 relative group"
+                        className={`py-2 border-b border-white/10 last:border-0 relative group ${
+                          selectedCategory && program.category !== selectedCategory ? 'hidden' : ''
+                        }`}
                       >
                         {editMode ? (
                           <div className="absolute right-0 top-0 space-x-2">
@@ -429,9 +460,40 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                           </span>
                         </div>
                         {program.description && (
-                          <p className="mt-1 text-sm text-white/60 ml-7">
-                            {program.description}
-                          </p>
+                          <div className="mt-1 ml-7 flex items-center justify-between">
+                            <p className="text-sm text-white/60">
+                              {program.description}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setReminders(prev => ({
+                                  ...prev,
+                                  [program.id]: !prev[program.id]
+                                }));
+                                if (!reminders[program.id]) {
+                                  // Programmer une notification
+                                  const programTime = new Date(program.startTime);
+                                  const now = new Date();
+                                  if (programTime > now) {
+                                    setTimeout(() => {
+                                      new Notification(`Le programme ${program.title} va commencer!`, {
+                                        body: `Sur ${channel.name} dans quelques minutes`
+                                      });
+                                    }, programTime.getTime() - now.getTime() - 5 * 60 * 1000); // 5 minutes avant
+                                  }
+                                }
+                              }}
+                              className={`${
+                                reminders[program.id] 
+                                  ? 'text-pink-400 hover:text-pink-300' 
+                                  : 'text-white/60 hover:text-white'
+                              }`}
+                            >
+                              {reminders[program.id] ? 'Rappel activé' : 'Définir un rappel'}
+                            </Button>
+                          </div>
                         )}
                       </motion.div>
                     ))}
