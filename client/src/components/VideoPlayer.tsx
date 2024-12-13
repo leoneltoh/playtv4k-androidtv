@@ -11,8 +11,41 @@ interface VideoPlayerProps {
 export function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [showSidebar, setShowSidebar] = useState(false);
   const [currentUrl, setCurrentUrl] = useState(url);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
+    const enterFullscreen = () => {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if ((elem as any).webkitRequestFullscreen) {
+        (elem as any).webkitRequestFullscreen();
+      } else if ((elem as any).msRequestFullscreen) {
+        (elem as any).msRequestFullscreen();
+      }
+      setIsFullscreen(true);
+    };
+
+    enterFullscreen();
+
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      if (!document.fullscreenElement) {
+        enterFullscreen();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Menu' || e.key === 'ContextMenu' || e.key === 'Enter') {
         setShowSidebar(prev => !prev);
@@ -54,8 +87,14 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
               controlsList: 'nodownload',
               className: 'w-full h-full',
               'x-webkit-airplay': 'allow',
+              'webkit-playsinline': true,
               playsInline: true,
-              autoPlay: true
+              autoPlay: true,
+              'data-fullscreen': true,
+              'x-webkit-fullscreen': true,
+              'webkit-fullscreen': true,
+              fullScreen: true,
+              style: 'position: absolute; width: 100%; height: 100%; top: 0; left: 0; object-fit: contain;'
             }
           }
         }}
