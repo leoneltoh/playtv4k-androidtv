@@ -85,7 +85,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
       e.preventDefault();
       setShowSidebar(prev => !prev);
       setShowGuide(false);
-    } else if (e.key === 'g' || e.key === 'G') {
+    } else if (e.key === 'g' || e.key === 'G' || e.key === 'i' || e.key === 'I' || e.key === 'Info' || e.key === 'F1') {
       e.preventDefault();
       setShowGuide(prev => !prev);
       setShowSidebar(false);
@@ -99,11 +99,21 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
 
   return (
     <div className="fixed inset-0 bg-black">
-      <GuideTV
-        channels={channels || []}
-        isVisible={showGuide}
-        onClose={() => setShowGuide(false)}
-      />
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isFullscreen ? 0 : 1 }}
+          whileHover={{ opacity: 1, scale: 1.1 }}
+          onClick={() => setShowGuide(prev => !prev)}
+          className="fixed top-4 right-4 z-50 p-2 bg-black/50 backdrop-blur-sm rounded-full hover:bg-pink-500/30 transition-colors duration-300"
+          title="Guide des programmes"
+        >
+          <Calendar className="w-6 h-6 text-white" />
+        </motion.button>
+        <GuideTV
+          channels={channels || []}
+          isVisible={showGuide}
+          onClose={() => setShowGuide(false)}
+        />
       <ReactPlayer
         url={currentUrl}
         width="100%"
