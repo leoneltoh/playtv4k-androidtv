@@ -1,5 +1,7 @@
 import ReactPlayer from 'react-player';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ChannelSidebar } from './ChannelSidebar';
+import type { Channel } from '@/lib/types';
 
 interface VideoPlayerProps {
   url: string;
@@ -7,29 +9,38 @@ interface VideoPlayerProps {
 }
 
 export function VideoPlayer({ url, title }: VideoPlayerProps) {
-  useEffect(() => {
-    // Demander le mode plein écran lors du chargement
-    const element = document.documentElement;
-    if (element.requestFullscreen) {
-      element.requestFullscreen().catch(err => {
-        console.log('Erreur lors du passage en plein écran:', err);
-      });
-    }
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState(url);
 
-    return () => {
-      // Quitter le mode plein écran lors du démontage
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(err => {
-          console.log('Erreur lors de la sortie du plein écran:', err);
-        });
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Menu' || e.key === 'ContextMenu' || e.key === 'Enter') {
+        setShowSidebar(prev => !prev);
       }
     };
+
+    const handleClick = () => {
+      setShowSidebar(prev => !prev);
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+      document.removeEventListener('click', handleClick);
+    };
   }, []);
+
+  const handleChannelSelect = (channel: Channel) => {
+    setCurrentUrl(channel.url);
+    setShowSidebar(false);
+  };
 
   return (
     <div className="fixed inset-0 bg-black">
       <ReactPlayer
-        url={url}
+        url={currentUrl}
         width="100%"
         height="100%"
         playing
@@ -44,8 +55,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
               className: 'w-full h-full',
               'x-webkit-airplay': 'allow',
               playsInline: true,
-              autoPlay: true,
-              webkitPlaysinline: true
+              autoPlay: true
             }
           }
         }}
@@ -55,6 +65,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
           left: 0
         }}
       />
+      <ChannelSidebar isVisible={showSidebar} onChannelSelect={handleChannelSelect} />
     </div>
   );
 }
