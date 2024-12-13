@@ -87,14 +87,17 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
               controlsList: 'nodownload',
               className: 'w-full h-full',
               'x-webkit-airplay': 'allow',
-              'webkit-playsinline': true,
               playsInline: true,
               autoPlay: true,
-              'data-fullscreen': true,
-              'x-webkit-fullscreen': true,
-              'webkit-fullscreen': true,
-              fullScreen: true,
-              style: 'position: absolute; width: 100%; height: 100%; top: 0; left: 0; object-fit: contain;'
+              'data-fullscreen': 'true',
+              style: {
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                top: 0,
+                left: 0,
+                objectFit: 'contain'
+              }
             }
           }
         }}
