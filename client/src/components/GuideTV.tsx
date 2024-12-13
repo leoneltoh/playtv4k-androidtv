@@ -22,17 +22,36 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
     const programs: Program[] = [];
     let currentTime = new Date();
     
+    const categories = [
+      "Films", "Séries", "Sport", "Information", "Documentaire", 
+      "Divertissement", "Jeunesse", "Culture"
+    ];
+    
+    const titles = {
+      "Films": ["Le Grand Film", "Action Totale", "Comédie du Soir", "Drame Passionné"],
+      "Séries": ["Les Aventuriers", "Enquêtes Spéciales", "La Famille", "Docteur Urgences"],
+      "Sport": ["Match de Football", "Tennis en Direct", "Basketball Championship", "Sports Extrêmes"],
+      "Information": ["Journal TV", "Enquêtes et Reportages", "Magazine d'Investigation"],
+      "Documentaire": ["Nature Sauvage", "Histoire Mondiale", "Sciences et Découvertes"],
+      "Divertissement": ["Le Grand Show", "Jeux et Quiz", "Télé-Réalité"],
+      "Jeunesse": ["Dessins Animés", "Club des Enfants", "Aventures Animées"],
+      "Culture": ["Arts et Culture", "Musique Live", "Théâtre et Spectacles"]
+    };
+    
     for (let i = 0; i < 5; i++) {
       const startTime = new Date(currentTime);
-      const endTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000); // 2 heures par programme
+      const endTime = new Date(startTime.getTime() + (Math.random() * 2 + 1) * 60 * 60 * 1000);
+      const category = channel.group || categories[Math.floor(Math.random() * categories.length)];
+      const titlesList = titles[category as keyof typeof titles] || titles["Divertissement"];
+      const title = titlesList[Math.floor(Math.random() * titlesList.length)];
       
       programs.push({
         id: crypto.randomUUID(),
-        title: `Programme sur ${channel.name}`,
-        description: "Description du programme à venir",
+        title,
+        description: `Ne manquez pas ${title} sur ${channel.name}. Un programme exclusif sélectionné spécialement pour vous.`,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
-        category: channel.group || "Divertissement",
+        category,
         thumbnail: channel.logo
       });
       
@@ -49,8 +68,13 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
           initial={{ opacity: 0, y: "100%" }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "100%" }}
-          transition={{ type: "spring", duration: 0.5 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-hidden flex flex-col"
+          transition={{ 
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+            mass: 1
+          }}
+          className="fixed inset-0 bg-gradient-to-br from-black/90 via-black/85 to-purple-900/80 backdrop-blur-sm z-50 overflow-hidden flex flex-col"
         >
           <div className="flex items-center justify-between p-4 bg-black/40">
             <div className="flex items-center space-x-4">
