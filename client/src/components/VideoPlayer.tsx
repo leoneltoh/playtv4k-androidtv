@@ -14,37 +14,39 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
-    const enterFullscreen = () => {
-      const elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if ((elem as any).webkitRequestFullscreen) {
-        (elem as any).webkitRequestFullscreen();
-      } else if ((elem as any).msRequestFullscreen) {
-        (elem as any).msRequestFullscreen();
+    const handleFullscreen = async () => {
+      try {
+        const elem = document.documentElement;
+        const isInFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
+        
+        if (!isInFullscreen) {
+          if (elem.requestFullscreen) {
+            await elem.requestFullscreen();
+          } else if ((elem as any).webkitRequestFullscreen) {
+            await (elem as any).webkitRequestFullscreen();
+          }
+          setIsFullscreen(true);
+        }
+      } catch (error) {
+        console.warn('Fullscreen not available:', error);
+        // Continue playback even if fullscreen fails
       }
-      setIsFullscreen(true);
     };
 
-    enterFullscreen();
+    // Try to enter fullscreen on mount
+    handleFullscreen();
 
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-      if (!document.fullscreenElement) {
-        enterFullscreen();
-      }
+      const isInFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
+      setIsFullscreen(!!isInFullscreen);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Menu' || e.key === 'ContextMenu' || e.key === 'Enter') {
@@ -83,20 +85,17 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
           file: {
             forceVideo: true,
             attributes: {
-              poster: '',
               controlsList: 'nodownload',
-              className: 'w-full h-full',
-              'x-webkit-airplay': 'allow',
               playsInline: true,
               autoPlay: true,
-              'data-fullscreen': 'true',
               style: {
                 position: 'absolute',
                 width: '100%',
                 height: '100%',
-                top: 0,
-                left: 0,
-                objectFit: 'contain'
+                top: '0',
+                left: '0',
+                objectFit: 'contain',
+                backgroundColor: '#000'
               }
             }
           }
@@ -104,7 +103,10 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
         style={{
           position: 'absolute',
           top: 0,
-          left: 0
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: '#000'
         }}
       />
       <ChannelSidebar isVisible={showSidebar} onChannelSelect={handleChannelSelect} />
