@@ -23,7 +23,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
       className="focus-within:outline-none focus-within:ring-2 focus-within:ring-primary rounded-lg"
     >
       <Card
-        className="cursor-pointer overflow-hidden bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300"
+        className="cursor-pointer overflow-hidden bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 border border-white/20"
         onClick={() => setLocation(`/watch/${channel.id}`)}
       >
         <div className="aspect-video relative group">

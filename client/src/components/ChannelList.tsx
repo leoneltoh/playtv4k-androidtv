@@ -22,7 +22,7 @@ export function ChannelList({ channels }: ChannelListProps) {
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 relative z-10"
     >
       {channels.map((channel) => (
         <ChannelCard key={channel.id} channel={channel} />

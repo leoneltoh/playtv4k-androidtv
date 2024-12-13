@@ -2,6 +2,8 @@ import { ChannelList } from "@/components/ChannelList";
 import { useM3uData } from "@/hooks/useM3uData";
 import { motion } from "framer-motion";
 
+import { BackgroundSlider } from "@/components/BackgroundSlider";
+
 export function Home() {
   const { data: channels, isLoading } = useM3uData();
 
@@ -9,8 +11,9 @@ export function Home() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-b from-background to-background/80"
+      className="min-h-screen relative"
     >
+      <BackgroundSlider />
       <div className="container mx-auto px-4 py-8">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
