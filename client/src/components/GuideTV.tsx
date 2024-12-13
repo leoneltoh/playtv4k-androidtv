@@ -29,8 +29,24 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
   const [, setLocation] = useLocation();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Simulation des programmes pour la démonstration
+  const [editMode, setEditMode] = useState(false);
+  const [editingProgram, setEditingProgram] = useState<Program | null>(null);
+  const [customPrograms, setCustomPrograms] = useState<Record<string, Program[]>>(() => {
+    const saved = localStorage.getItem('customPrograms');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem('customPrograms', JSON.stringify(customPrograms));
+  }, [customPrograms]);
+
+  // Génération et gestion des programmes
   const generatePrograms = (channel: Channel): Program[] => {
+    // Si des programmes personnalisés existent pour cette chaîne, les utiliser
+    if (customPrograms[channel.id]) {
+      return customPrograms[channel.id];
+    }
+
     const programs: Program[] = [];
     let currentTime = new Date();
     
@@ -138,13 +154,113 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                 Guide des Programmes
               </h2>
             </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-pink-400" />
-              <span className="text-pink-200">
-                {format(selectedDate, "EEEE d MMMM", { locale: fr })}
-              </span>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditMode(!editMode)}
+                className={`${editMode ? 'bg-pink-500/20' : ''} hover:bg-pink-500/30`}
+              >
+                {editMode ? 'Terminer l\'édition' : 'Modifier les programmes'}
+              </Button>
+              <div className="flex items-center space-x-2">
+                <Clock className="w-5 h-5 text-pink-400" />
+                <span className="text-pink-200">
+                  {format(selectedDate, "EEEE d MMMM", { locale: fr })}
+                </span>
+              </div>
             </div>
           </div>
+
+          {editingProgram && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-background p-6 rounded-lg w-full max-w-md"
+              >
+                <h3 className="text-xl font-semibold mb-4">Modifier le programme</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Titre</label>
+                    <input
+                      type="text"
+                      value={editingProgram.title}
+                      onChange={(e) => setEditingProgram({ ...editingProgram, title: e.target.value })}
+                      className="w-full p-2 bg-white/10 rounded-md border border-white/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <textarea
+                      value={editingProgram.description}
+                      onChange={(e) => setEditingProgram({ ...editingProgram, description: e.target.value })}
+                      className="w-full p-2 bg-white/10 rounded-md border border-white/20 h-24"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Heure de début</label>
+                      <input
+                        type="time"
+                        value={format(new Date(editingProgram.startTime), "HH:mm")}
+                        onChange={(e) => {
+                          const [hours, minutes] = e.target.value.split(':');
+                          const date = new Date(editingProgram.startTime);
+                          date.setHours(parseInt(hours), parseInt(minutes));
+                          setEditingProgram({ ...editingProgram, startTime: date.toISOString() });
+                        }}
+                        className="w-full p-2 bg-white/10 rounded-md border border-white/20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Heure de fin</label>
+                      <input
+                        type="time"
+                        value={format(new Date(editingProgram.endTime), "HH:mm")}
+                        onChange={(e) => {
+                          const [hours, minutes] = e.target.value.split(':');
+                          const date = new Date(editingProgram.endTime);
+                          date.setHours(parseInt(hours), parseInt(minutes));
+                          setEditingProgram({ ...editingProgram, endTime: date.toISOString() });
+                        }}
+                        className="w-full p-2 bg-white/10 rounded-md border border-white/20"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-2 mt-6">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setEditingProgram(null)}
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const channelId = channels.find(c => 
+                          c.programs?.some(p => p.id === editingProgram.id)
+                        )?.id;
+                        
+                        if (channelId) {
+                          const updatedPrograms = customPrograms[channelId]?.map(p =>
+                            p.id === editingProgram.id ? editingProgram : p
+                          ) || [editingProgram];
+                          
+                          setCustomPrograms({
+                            ...customPrograms,
+                            [channelId]: updatedPrograms
+                          });
+                        }
+                        setEditingProgram(null);
+                      }}
+                    >
+                      Enregistrer
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
             <motion.div
@@ -179,8 +295,36 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                       <motion.div
                         key={program.id}
                         whileHover={{ scale: 1.02 }}
-                        className="py-2 border-b border-white/10 last:border-0"
+                        className="py-2 border-b border-white/10 last:border-0 relative group"
                       >
+                        {editMode ? (
+                          <div className="absolute right-0 top-0 space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEditingProgram(program);
+                              }}
+                              className="text-pink-400 hover:text-pink-300"
+                            >
+                              Modifier
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const updatedPrograms = customPrograms[channel.id].filter(p => p.id !== program.id);
+                                setCustomPrograms({
+                                  ...customPrograms,
+                                  [channel.id]: updatedPrograms
+                                });
+                              }}
+                              className="text-red-400 hover:text-red-300"
+                            >
+                              Supprimer
+                            </Button>
+                          </div>
+                        ) : null}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <Film className="w-4 h-4 text-pink-400" />
