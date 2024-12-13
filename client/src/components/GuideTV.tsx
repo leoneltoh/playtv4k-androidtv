@@ -46,7 +46,7 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "cientadmin") {
+    if (password === "1234") {
       setEditMode(true);
       setShowPasswordModal(false);
       setPassword("");
