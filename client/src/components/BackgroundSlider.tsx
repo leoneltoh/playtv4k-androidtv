@@ -32,7 +32,7 @@ export function BackgroundSlider() {
           className="absolute inset-0 w-full h-full object-cover"
         />
       </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-background/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-background/30 to-background/5" />
     </div>
   );
 }

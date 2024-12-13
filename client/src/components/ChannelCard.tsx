@@ -23,20 +23,20 @@ export function ChannelCard({ channel }: ChannelCardProps) {
       className="focus-within:outline-none focus-within:ring-2 focus-within:ring-primary rounded-lg"
     >
       <Card
-        className="cursor-pointer overflow-hidden bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 border border-white/20"
+        className="cursor-pointer overflow-hidden bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 border border-white/20"
         onClick={() => setLocation(`/watch/${channel.id}`)}
       >
         <div className="aspect-video relative group">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           {channel.logo ? (
             <img 
               src={channel.logo} 
               alt={channel.name}
-              className="w-full h-full object-contain p-4 bg-black/50 transition-transform duration-300 group-hover:scale-110"
+              className="w-full h-full object-contain p-4 bg-transparent transition-transform duration-300 group-hover:scale-110"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/10">
-              <span className="text-3xl font-bold text-primary">{channel.name[0]}</span>
+            <div className="w-full h-full flex items-center justify-center bg-white/10 backdrop-blur-sm">
+              <span className="text-3xl font-bold text-primary/90">{channel.name[0]}</span>
             </div>
           )}
           <motion.div 
