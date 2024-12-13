@@ -79,9 +79,21 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
   }, []);
 
   const handleChannelSelect = (channel: Channel) => {
+    const { addToHistory, updateDuration } = useChannelRecommendations([]);
+    const previousChannel = channels?.find(c => c.url === currentUrl);
+    
+    if (previousChannel) {
+      const viewingDuration = Date.now() - lastChannelChangeTime;
+      updateDuration(previousChannel.id, viewingDuration);
+    }
+    
     setCurrentUrl(channel.url);
     setShowSidebar(false);
+    addToHistory(channel.id);
+    setLastChannelChangeTime(Date.now());
   };
+  
+  const [lastChannelChangeTime, setLastChannelChangeTime] = useState(Date.now());
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === 'Menu' || e.key === 'ContextMenu') {

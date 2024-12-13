@@ -52,18 +52,36 @@ export function useChannelRecommendations(channels: Channel[]) {
 
   const addToHistory = (channelId: string) => {
     const history: ViewingHistory[] = JSON.parse(localStorage.getItem('viewingHistory') || '[]');
+    const now = Date.now();
+    const dayStart = new Date().setHours(0, 0, 0, 0);
     
-    history.push({
+    // Nettoyer l'historique des entrées de plus de 30 jours
+    const recentHistory = history.filter(entry => (now - entry.timestamp) <= 30 * 24 * 60 * 60 * 1000);
+    
+    // Calculer les statistiques de visionnage pour aujourd'hui
+    const todayEntries = recentHistory.filter(entry => entry.timestamp >= dayStart);
+    const todayDuration = todayEntries.reduce((acc, entry) => acc + entry.duration, 0);
+    
+    const newEntry = {
       channelId,
-      timestamp: Date.now(),
-      duration: 0 // Sera mis à jour lors de la fermeture
-    });
-
-    while (history.length > 100) { // Garder seulement les 100 dernières entrées
-      history.shift();
+      timestamp: now,
+      duration: 0,
+      dayTotal: todayDuration
+    };
+    
+    recentHistory.push(newEntry);
+    
+    while (recentHistory.length > 100) {
+      recentHistory.shift();
     }
 
-    localStorage.setItem('viewingHistory', JSON.stringify(history));
+    localStorage.setItem('viewingHistory', JSON.stringify(recentHistory));
+    
+    // Sauvegarder les statistiques quotidiennes
+    const stats = JSON.parse(localStorage.getItem('viewingStats') || '{}');
+    const dayKey = new Date(dayStart).toISOString().split('T')[0];
+    stats[dayKey] = (stats[dayKey] || 0) + 1;
+    localStorage.setItem('viewingStats', JSON.stringify(stats));
   };
 
   const updateDuration = (channelId: string, duration: number) => {
