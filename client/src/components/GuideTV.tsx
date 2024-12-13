@@ -103,30 +103,40 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                   </div>
 
                   <div className="p-4">
-                    {programs?.map((program) => (
-                      <motion.div
-                        key={program.id}
-                        whileHover={{ scale: 1.02 }}
-                        className="py-2 border-b border-white/10 last:border-0"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Film className="w-4 h-4 text-pink-400" />
-                            <span className="text-white/90">{program.title}</span>
-                          </div>
-                          <span className="text-sm text-pink-300">
-                            {format(new Date(program.startTime), "HH:mm")} - 
-                            {format(new Date(program.endTime), "HH:mm")}
-                          </span>
+                      {programsLoading ? (
+                        <div className="animate-pulse space-y-4">
+                          {[...Array(3)].map((_, i) => (
+                            <div key={i} className="h-16 bg-white/10 rounded-lg" />
+                          ))}
                         </div>
-                        {program.description && (
-                          <p className="mt-1 text-sm text-white/60 ml-7">
-                            {program.description}
-                          </p>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
+                      ) : allPrograms && allPrograms.length > 0 ? (
+                        allPrograms.map((program) => (
+                          <motion.div
+                            key={program.id}
+                            whileHover={{ scale: 1.02 }}
+                            className="py-2 border-b border-white/10 last:border-0"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <Film className="w-4 h-4 text-pink-400" />
+                                <span className="text-white/90">{program.title}</span>
+                              </div>
+                              <span className="text-sm text-pink-300">
+                                {format(new Date(program.startTime), "HH:mm")} - 
+                                {format(new Date(program.endTime), "HH:mm")}
+                              </span>
+                            </div>
+                            {program.description && (
+                              <p className="mt-1 text-sm text-white/60 ml-7">
+                                {program.description}
+                              </p>
+                            )}
+                          </motion.div>
+                        ))
+                      ) : (
+                        <p className="text-white/60 text-center">Aucun programme disponible</p>
+                      )}
+                    </div>
                 </motion.div>
               ))}
             </motion.div>
