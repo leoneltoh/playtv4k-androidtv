@@ -1,9 +1,12 @@
 import ReactPlayer from 'react-player';
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Info } from 'lucide-react';
 import { ChannelSidebar } from './ChannelSidebar';
 import { GuideTV } from './GuideTV';
 import { useM3uData } from '@/hooks/useM3uData';
 import type { Channel } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 interface VideoPlayerProps {
   url: string;
@@ -99,16 +102,35 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
 
   return (
     <div className="fixed inset-0 bg-black">
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isFullscreen ? 0 : 1 }}
-          whileHover={{ opacity: 1, scale: 1.1 }}
-          onClick={() => setShowGuide(prev => !prev)}
-          className="fixed top-4 right-4 z-50 p-2 bg-black/50 backdrop-blur-sm rounded-full hover:bg-pink-500/30 transition-colors duration-300"
-          title="Guide des programmes"
-        >
-          <Calendar className="w-6 h-6 text-white" />
-        </motion.button>
+        <AnimatePresence>
+          {!isFullscreen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed top-4 right-4 z-50 flex gap-2"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowGuide(prev => !prev)}
+                className="bg-black/50 backdrop-blur-sm hover:bg-pink-500/30 transition-colors duration-300"
+                title="Guide des programmes (touche Info ou i)"
+              >
+                <Info className="w-6 h-6 text-white" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowGuide(prev => !prev)}
+                className="bg-black/50 backdrop-blur-sm hover:bg-pink-500/30 transition-colors duration-300"
+                title="Planning TV"
+              >
+                <Calendar className="w-6 h-6 text-white" />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <GuideTV
           channels={channels || []}
           isVisible={showGuide}
