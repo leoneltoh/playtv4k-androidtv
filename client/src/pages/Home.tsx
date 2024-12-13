@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BackgroundSlider } from "@/components/BackgroundSlider";
 import { ChannelList } from "@/components/ChannelList";
 import { SearchBar } from "@/components/SearchBar";
+import { AnimatedBanner } from "@/components/AnimatedBanner";
 import { useM3uData } from "@/hooks/useM3uData";
 
 export function Home() {
@@ -51,7 +52,53 @@ export function Home() {
             Regardez vos chaînes préférées en streaming HD
           </motion.p>
           
-          <SearchBar onSearch={setSearchQuery} />
+          <div className="flex items-center justify-center gap-8 w-full">
+            <AnimatedBanner
+              position="left"
+              images={[
+                {
+                  src: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=500&q=80",
+                  alt: "Football"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=500&q=80",
+                  alt: "Jeux TV"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1581790059834-3ad2c8b07801?w=500&q=80",
+                  alt: "Satellite"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1586899028174-e7098604235b?w=500&q=80",
+                  alt: "Régie TV"
+                }
+              ]}
+            />
+            <div className="flex-1 max-w-xl">
+              <SearchBar onSearch={setSearchQuery} />
+            </div>
+            <AnimatedBanner
+              position="right"
+              images={[
+                {
+                  src: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&q=80",
+                  alt: "Cinéma"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=500&q=80",
+                  alt: "Service TV"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500&q=80",
+                  alt: "Équipement Audiovisuel"
+                },
+                {
+                  src: "https://images.unsplash.com/photo-1612838250882-c35badd66c08?w=500&q=80",
+                  alt: "Décodeur"
+                }
+              ]}
+            />
+          </div>
         </motion.div>
         
         {isLoading ? (
