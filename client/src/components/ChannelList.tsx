@@ -22,10 +22,25 @@ export function ChannelList({ channels }: ChannelListProps) {
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 relative z-10"
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 relative z-10"
+      style={{
+        perspective: "1000px",
+        transformStyle: "preserve-3d"
+      }}
     >
-      {channels.map((channel) => (
-        <ChannelCard key={channel.id} channel={channel} />
+      {channels.map((channel, index) => (
+        <motion.div
+          key={channel.id}
+          initial={{ opacity: 0, rotateX: -15, y: 50 }}
+          animate={{ opacity: 1, rotateX: 0, y: 0 }}
+          transition={{
+            duration: 0.8,
+            delay: index * 0.1,
+            ease: [0.43, 0.13, 0.23, 0.96]
+          }}
+        >
+          <ChannelCard channel={channel} />
+        </motion.div>
       ))}
     </motion.div>
   );
