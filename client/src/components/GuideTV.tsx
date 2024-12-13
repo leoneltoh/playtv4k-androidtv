@@ -496,7 +496,7 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                                                   body: `Ne manquez pas ce programme sur ${channel.name}`,
                                                   icon: channel.logo || '/favicon.ico',
                                                   badge: channel.logo || '/favicon.ico',
-                                                  vibrate: [200, 100, 200],
+                                                  
                                                   tag: `program-${program.id}-${message}`,
                                                   renotify: true
                                                 });

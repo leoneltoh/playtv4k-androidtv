@@ -79,7 +79,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
   }, []);
 
   const handleChannelSelect = (channel: Channel) => {
-    const { addToHistory, updateDuration } = useChannelRecommendations([]);
+    const { addToHistory, updateDuration } = useChannelRecommendations(channels || []);
     const previousChannel = channels?.find(c => c.url === currentUrl);
     
     if (previousChannel) {
