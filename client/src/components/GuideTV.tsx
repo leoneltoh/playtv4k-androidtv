@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { format } from "date-fns";
@@ -23,21 +23,91 @@ interface GuideTVProps {
   channels: Channel[];
   isVisible: boolean;
   onClose: () => void;
-  allPrograms: Program[] | undefined;
-  programsLoading: boolean;
 }
 
-export function GuideTV({ channels, isVisible, onClose, allPrograms, programsLoading }: GuideTVProps) {
+export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
   const [, setLocation] = useLocation();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Simuler un temps de chargement
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
+  // Simulation des programmes pour la démonstration
+  const generatePrograms = (channel: Channel): Program[] => {
+    const programs: Program[] = [];
+    let currentTime = new Date();
+    
+    const categories = [
+      "Films", "Séries", "Sport", "Information", "Documentaire", 
+      "Divertissement", "Jeunesse", "Culture", "Musique", "Télé-réalité"
+    ];
+    
+    const categoryIcons = {
+      "Films": Film,
+      "Séries": Tv,
+      "Sport": Trophy,
+      "Information": Globe,
+      "Documentaire": BookOpen,
+      "Divertissement": Theater,
+      "Jeunesse": Baby,
+      "Culture": Radio,
+      "Musique": Music
+    };
+    
+    const titles = {
+      "Films": [
+        "Le Grand Film", "Action Totale", "Comédie du Soir", "Drame Passionné",
+        "Aventure Spatiale", "Romance d'Été", "Thriller Nocturne", "Western Moderne"
+      ],
+      "Séries": [
+        "Les Aventuriers", "Enquêtes Spéciales", "La Famille", "Docteur Urgences",
+        "Police Scientifique", "Histoires Parallèles", "Le Bureau", "Café des Secrets"
+      ],
+      "Sport": [
+        "Match de Football", "Tennis en Direct", "Basketball Championship", "Sports Extrêmes",
+        "Rugby Elite", "F1 Grand Prix", "Boxe Championship", "Athlétisme Elite"
+      ],
+      "Information": [
+        "Journal TV", "Enquêtes et Reportages", "Magazine d'Investigation",
+        "Débat du Jour", "Edition Spéciale", "Le Point", "7 Jours en France"
+      ],
+      "Documentaire": [
+        "Nature Sauvage", "Histoire Mondiale", "Sciences et Découvertes",
+        "Voyage Culinaire", "Secrets de l'Univers", "Tech & Futur", "Civilisations"
+      ],
+      "Divertissement": [
+        "Le Grand Show", "Jeux et Quiz", "Télé-Réalité", "Karaoké Star",
+        "Talent Show", "Top Chef", "Les Stars en Cuisine", "Danse avec les Stars"
+      ],
+      "Jeunesse": [
+        "Dessins Animés", "Club des Enfants", "Aventures Animées",
+        "Les Mini-héros", "École des Découvertes", "Jeux & Cie", "Les Petits Génies"
+      ],
+      "Culture": [
+        "Arts et Culture", "Musique Live", "Théâtre et Spectacles",
+        "Expo Mondiale", "Festival Jazz", "Opéra Classic", "Danse Contemporaine"
+      ]
+    };
+    
+    for (let i = 0; i < 5; i++) {
+      const startTime = new Date(currentTime);
+      const endTime = new Date(startTime.getTime() + (Math.random() * 2 + 1) * 60 * 60 * 1000);
+      const category = channel.group || categories[Math.floor(Math.random() * categories.length)];
+      const titlesList = titles[category as keyof typeof titles] || titles["Divertissement"];
+      const title = titlesList[Math.floor(Math.random() * titlesList.length)];
+      
+      programs.push({
+        id: crypto.randomUUID(),
+        title,
+        description: `Ne manquez pas ${title} sur ${channel.name}. Un programme exclusif sélectionné spécialement pour vous.`,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        category,
+        thumbnail: channel.logo
+      });
+      
+      currentTime = endTime;
+    }
+    
+    return programs;
+  };
 
   return (
     <AnimatePresence>
@@ -105,40 +175,30 @@ export function GuideTV({ channels, isVisible, onClose, allPrograms, programsLoa
                   </div>
 
                   <div className="p-4">
-                      {isLoading ? (
-                        <div className="animate-pulse space-y-4">
-                          {[...Array(3)].map((_, i) => (
-                            <div key={i} className="h-16 bg-white/10 rounded-lg" />
-                          ))}
+                    {generatePrograms(channel).map((program) => (
+                      <motion.div
+                        key={program.id}
+                        whileHover={{ scale: 1.02 }}
+                        className="py-2 border-b border-white/10 last:border-0"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Film className="w-4 h-4 text-pink-400" />
+                            <span className="text-white/90">{program.title}</span>
+                          </div>
+                          <span className="text-sm text-pink-300">
+                            {format(new Date(program.startTime), "HH:mm")} - 
+                            {format(new Date(program.endTime), "HH:mm")}
+                          </span>
                         </div>
-                      ) : channel.programs && channel.programs.length > 0 ? (
-                        channel.programs.map((program) => (
-                          <motion.div
-                            key={program.id}
-                            whileHover={{ scale: 1.02 }}
-                            className="py-2 border-b border-white/10 last:border-0"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <Film className="w-4 h-4 text-pink-400" />
-                                <span className="text-white/90">{program.title}</span>
-                              </div>
-                              <span className="text-sm text-pink-300">
-                                {format(new Date(program.startTime), "HH:mm")} - 
-                                {format(new Date(program.endTime), "HH:mm")}
-                              </span>
-                            </div>
-                            {program.description && (
-                              <p className="mt-1 text-sm text-white/60 ml-7">
-                                {program.description}
-                              </p>
-                            )}
-                          </motion.div>
-                        ))
-                      ) : (
-                        <p className="text-white/60 text-center">Aucun programme disponible</p>
-                      )}
-                    </div>
+                        {program.description && (
+                          <p className="mt-1 text-sm text-white/60 ml-7">
+                            {program.description}
+                          </p>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
