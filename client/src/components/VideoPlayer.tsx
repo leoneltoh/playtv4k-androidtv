@@ -1,6 +1,8 @@
 import ReactPlayer from 'react-player';
 import { useEffect, useState } from 'react';
 import { ChannelSidebar } from './ChannelSidebar';
+import { GuideTV } from './GuideTV';
+import { useM3uData } from '@/hooks/useM3uData';
 import type { Channel } from '@/lib/types';
 
 interface VideoPlayerProps {
@@ -10,7 +12,9 @@ interface VideoPlayerProps {
 
 export function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const [currentUrl, setCurrentUrl] = useState(url);
+  const { data: channels } = useM3uData();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -76,8 +80,30 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
     setShowSidebar(false);
   };
 
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Menu' || e.key === 'ContextMenu') {
+      e.preventDefault();
+      setShowSidebar(prev => !prev);
+      setShowGuide(false);
+    } else if (e.key === 'g' || e.key === 'G') {
+      e.preventDefault();
+      setShowGuide(prev => !prev);
+      setShowSidebar(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black">
+      <GuideTV
+        channels={channels || []}
+        isVisible={showGuide}
+        onClose={() => setShowGuide(false)}
+      />
       <ReactPlayer
         url={currentUrl}
         width="100%"
