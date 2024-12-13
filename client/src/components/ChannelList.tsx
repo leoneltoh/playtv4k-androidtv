@@ -31,12 +31,14 @@ export function ChannelList({ channels }: ChannelListProps) {
       {channels.map((channel, index) => (
         <motion.div
           key={channel.id}
-          initial={{ opacity: 0, rotateX: -15, y: 50 }}
-          animate={{ opacity: 1, rotateX: 0, y: 0 }}
+          initial={{ opacity: 0, rotateX: -15, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
           transition={{
-            duration: 0.8,
+            duration: 1,
             delay: index * 0.1,
-            ease: [0.43, 0.13, 0.23, 0.96]
+            ease: [0.34, 1.56, 0.64, 1],
+            opacity: { duration: 0.6 },
+            scale: { duration: 0.8 }
           }}
         >
           <ChannelCard channel={channel} />

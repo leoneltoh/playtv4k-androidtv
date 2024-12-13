@@ -18,12 +18,20 @@ export function ChannelCard({ channel }: ChannelCardProps) {
   return (
     <motion.div 
       variants={item}
-      whileHover={{ scale: 1.05, y: -8 }}
-      whileTap={{ scale: 0.95 }}
-      className="focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500/50 rounded-lg"
+      whileHover={{ 
+        scale: 1.05, 
+        y: -8,
+        rotateY: 5,
+        transition: {
+          duration: 0.4,
+          ease: "easeOut"
+        }
+      }}
+      whileTap={{ scale: 0.95, rotateY: -5 }}
+      className="focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500/50 rounded-lg transform-gpu perspective-1000"
     >
       <Card
-        className="cursor-pointer overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-500 border border-white/20 shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20"
+        className="cursor-pointer overflow-hidden bg-gradient-to-br from-white/10 via-pink-500/5 to-white/5 backdrop-blur-md hover:from-white/15 hover:via-pink-500/10 hover:to-white/10 transition-all duration-700 border border-white/20 shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 hover:border-pink-300/30"
         onClick={() => setLocation(`/watch/${channel.id}`)}
       >
         <div className="aspect-video relative group">
