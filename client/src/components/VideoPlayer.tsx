@@ -1,14 +1,12 @@
 import ReactPlayer from 'react-player';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Info, PictureInPicture2 } from 'lucide-react';
+import { Calendar, Info } from 'lucide-react';
 import { ChannelSidebar } from './ChannelSidebar';
 import { GuideTV } from './GuideTV';
 import { useM3uData } from '@/hooks/useM3uData';
 import type { Channel } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { usePiPMode } from '@/hooks/usePiPMode';
-import { useChannelRecommendations } from '@/hooks/useChannelRecommendations';
 
 interface VideoPlayerProps {
   url: string;
@@ -142,17 +140,6 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
               >
                 <Calendar className="w-6 h-6 text-white" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  usePiPMode.getState().togglePiP(currentUrl);
-                }}
-                className="bg-black/50 backdrop-blur-sm hover:bg-pink-500/30 transition-colors duration-300"
-                title="Mode Picture-in-Picture"
-              >
-                <PictureInPicture2 className="w-6 h-6 text-white" />
-              </Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -167,19 +154,21 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
         height="100%"
         playing
         controls
-        pip={false}
-        stopOnUnmount={false}
         playsinline
-        fallback={null}
         config={{
           file: {
+            forceVideo: true,
             attributes: {
+              controlsList: 'nodownload',
+              playsInline: true,
+              autoPlay: true,
               style: {
                 position: 'absolute',
-                top: 0,
-                left: 0,
                 width: '100%',
                 height: '100%',
+                top: '0',
+                left: '0',
+                objectFit: 'contain',
                 backgroundColor: '#000'
               }
             }
