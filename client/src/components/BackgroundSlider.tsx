@@ -26,13 +26,13 @@ export function BackgroundSlider() {
           key={currentIndex}
           src={images[currentIndex]}
           initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 0.5, scale: 1 }}
+          animate={{ opacity: 0.8, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 1 }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
     </div>
   );
 }
