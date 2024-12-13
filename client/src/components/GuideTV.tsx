@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Channel, Program } from "@/lib/types";
-import { usePrograms } from "@/hooks/usePrograms";
 import { Button } from "@/components/ui/button";
 import { 
   Calendar, 
@@ -24,18 +23,21 @@ interface GuideTVProps {
   channels: Channel[];
   isVisible: boolean;
   onClose: () => void;
+  allPrograms: Program[] | undefined;
+  programsLoading: boolean;
 }
 
-export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
+export function GuideTV({ channels, isVisible, onClose, allPrograms, programsLoading }: GuideTVProps) {
   const [, setLocation] = useLocation();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Utiliser les programmes réels de la base de données
-  const { data: allPrograms, isLoading: programsLoading } = usePrograms(
-    channels[0]?.id,
-    new Date(),
-    new Date(Date.now() + 24 * 60 * 60 * 1000)
-  );
+  useEffect(() => {
+    // Simuler un temps de chargement
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
 
   return (
     <AnimatePresence>
@@ -103,14 +105,14 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
                   </div>
 
                   <div className="p-4">
-                      {programsLoading ? (
+                      {isLoading ? (
                         <div className="animate-pulse space-y-4">
                           {[...Array(3)].map((_, i) => (
                             <div key={i} className="h-16 bg-white/10 rounded-lg" />
                           ))}
                         </div>
-                      ) : allPrograms && allPrograms.length > 0 ? (
-                        allPrograms.map((program) => (
+                      ) : channel.programs && channel.programs.length > 0 ? (
+                        channel.programs.map((program) => (
                           <motion.div
                             key={program.id}
                             whileHover={{ scale: 1.02 }}
