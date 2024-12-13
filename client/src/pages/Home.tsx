@@ -71,19 +71,19 @@ export function Home() {
                     position="left"
                     images={[
                       {
-                        src: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&q=80",
                         alt: "Football"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=500&q=80",
                         alt: "Jeux TV"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1581790059834-3ad2c8b07801?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1495563125611-fa99f0cd529f?w=500&q=80",
                         alt: "Satellite"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1586899028174-e7098604235b?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=500&q=80",
                         alt: "Régie TV"
                       }
                     ]}
@@ -99,19 +99,19 @@ export function Home() {
                     position="right"
                     images={[
                       {
-                        src: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&q=80",
                         alt: "Cinéma"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=500&q=80",
                         alt: "Service TV"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1568632234168-9fa6196059a5?w=500&q=80",
                         alt: "Équipement Audiovisuel"
                       },
                       {
-                        src: "https://images.unsplash.com/photo-1612838250882-c35badd66c08?w=500&q=80",
+                        src: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=500&q=80",
                         alt: "Décodeur"
                       }
                     ]}
