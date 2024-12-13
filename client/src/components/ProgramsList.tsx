@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 
 export function ProgramsList() {
   const { data: programs, isLoading } = useQuery<Program[]>({
-    queryKey: ["programs"],
+    queryKey: ["programs", channelId],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/programs`, {
+      const response = await fetch(`/api/channels/${channelId}/programs`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

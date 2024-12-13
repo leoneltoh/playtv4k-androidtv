@@ -25,6 +25,8 @@ interface ProgramFormProps {
   onClose: () => void;
   onSuccess: () => void;
   program?: ProgramForm;
+  channelId: string;
+  isEditing?: boolean;
 }
 
 export function ProgramForm({ onClose, onSuccess, program }: ProgramFormProps) {
@@ -46,7 +48,7 @@ export function ProgramForm({ onClose, onSuccess, program }: ProgramFormProps) {
     try {
       setIsLoading(true);
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/programs", {
+      const response = await fetch(`/api/channels/${channelId}/programs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
