@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Channel, Program } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
   Calendar, 
   Clock, 
@@ -16,7 +17,8 @@ import {
   BookOpen,
   Baby,
   Theater,
-  Radio
+  Radio,
+  X
 } from "lucide-react";
 
 interface GuideTVProps {
@@ -28,8 +30,10 @@ interface GuideTVProps {
 export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
   const [, setLocation] = useLocation();
   const [selectedDate, setSelectedDate] = useState(new Date());
-
   const [editMode, setEditMode] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [customPrograms, setCustomPrograms] = useState<Record<string, Program[]>>(() => {
     const saved = localStorage.getItem('customPrograms');
@@ -39,6 +43,18 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
   useEffect(() => {
     localStorage.setItem('customPrograms', JSON.stringify(customPrograms));
   }, [customPrograms]);
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "cientadmin") {
+      setEditMode(true);
+      setShowPasswordModal(false);
+      setPassword("");
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  };
 
   // Génération et gestion des programmes
   const generatePrograms = (channel: Channel): Program[] => {
@@ -158,7 +174,13 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setEditMode(!editMode)}
+                onClick={() => {
+                  if (editMode) {
+                    setEditMode(false);
+                  } else {
+                    setShowPasswordModal(true);
+                  }
+                }}
                 className={`${editMode ? 'bg-pink-500/20' : ''} hover:bg-pink-500/30`}
               >
                 {editMode ? 'Terminer l\'édition' : 'Modifier les programmes'}
@@ -172,6 +194,75 @@ export function GuideTV({ channels, isVisible, onClose }: GuideTVProps) {
             </div>
           </div>
 
+          {/* Modal de mot de passe */}
+          <AnimatePresence>
+            {showPasswordModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    setShowPasswordModal(false);
+                    setPassword("");
+                    setPasswordError(false);
+                  }
+                }}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  className="bg-background p-6 rounded-lg w-full max-w-md relative"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setPassword("");
+                      setPasswordError(false);
+                    }}
+                    className="absolute right-2 top-2"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  
+                  <h3 className="text-xl font-semibold mb-4">Authentification requise</h3>
+                  <form onSubmit={handlePasswordSubmit}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Mot de passe administrateur
+                        </label>
+                        <Input
+                          type="password"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setPasswordError(false);
+                          }}
+                          className={`w-full ${passwordError ? 'border-red-500' : ''}`}
+                          placeholder="Entrez le mot de passe"
+                        />
+                        {passwordError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            Mot de passe incorrect
+                          </p>
+                        )}
+                      </div>
+                      <Button type="submit" className="w-full">
+                        Valider
+                      </Button>
+                    </div>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Modal d'édition de programme */}
           {editingProgram && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
               <motion.div
