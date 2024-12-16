@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { parseM3u } from '@/lib/m3u-parser';
 import type { Channel } from '@/lib/types';
+import { parseM3u } from '@/lib/m3u-parser';
+
+const API_URL = import.meta.env.PROD 
+  ? '/.netlify/functions/api'
+  : 'http://localhost:5000/api/channels';
 
 export function useM3uData() {
   return useQuery<Channel[]>({
     queryKey: ['channels'],
     queryFn: async () => {
       try {
-        const response = await fetch('https://playtv-backend.onrender.com/api/channels');
+        const response = await fetch(API_URL);
         if (!response.ok) {
           throw new Error(`Erreur HTTP! statut: ${response.status}`);
         }
