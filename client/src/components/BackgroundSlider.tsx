@@ -13,7 +13,6 @@ export function BackgroundSlider() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Précharger toutes les images
     Promise.all(
       images.map((src) => {
         const img = new Image();
@@ -37,21 +36,21 @@ export function BackgroundSlider() {
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+      <div className="absolute inset-0 bg-black/90" /> {/* Overlay sombre */}
       <AnimatePresence initial={false}>
         <motion.div
           key={currentIndex}
           className="absolute inset-0"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: 0.15 }} {/* Opacité réduite à 15% */}
           exit={{ opacity: 0 }}
           transition={{ duration: 2, ease: "easeInOut" }}
         >
           <img
             src={images[currentIndex]}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-background/20 to-transparent" />
         </motion.div>
       </AnimatePresence>
     </div>
