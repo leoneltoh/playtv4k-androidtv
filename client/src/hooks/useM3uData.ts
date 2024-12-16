@@ -7,7 +7,7 @@ export function useM3uData() {
     queryKey: ['channels'],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/channels');
+        const response = await fetch('https://playtv-backend.onrender.com/api/channels');
         if (!response.ok) {
           throw new Error(`Erreur HTTP! statut: ${response.status}`);
         }
