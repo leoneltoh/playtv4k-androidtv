@@ -96,7 +96,7 @@ export function Home() {
                     position="left"
                     images={[
                       {
-                        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&q=80",
+                        src: "https://i.postimg.cc/jdGSg9rT/logo.png?w=500&q=80",
                         alt: "Football"
                       },
                       {
